@@ -1,0 +1,7 @@
+HAM10000_images_part_1/
+HAM10000_images_part_2/
+archive (1).zip
+venv/
+uploads/
+__pycache__/
+*.pyc

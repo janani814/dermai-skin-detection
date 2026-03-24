@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DermAI — Ayurvedic Skin Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#050b0e;
+  --g1:#0a1a14;--g2:#061510;--g3:#04100c;
+  --gold:#c9a84c;--gold2:#e8c96d;--gold3:#f5e0a0;
+  --emerald:#1a7a5e;--em2:#23a87f;--em3:#2dd4a0;
+  --cream:#f0ead6;--cream2:#e8dfc4;
+  --red:#e85d5d;--amber:#e8a84c;--blue:#4d9fff;
+  --card:rgba(255,255,255,.04);--card2:rgba(255,255,255,.07);
+  --border:rgba(201,168,76,.15);--border2:rgba(201,168,76,.3);
+  --text:#e8e0cc;--muted:#7a8a80;
+  --font:'DM Sans',sans-serif;
+  --display:'Playfair Display',serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:15px;
+  line-height:1.7;
+  overflow-x:hidden;
+  cursor:default;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-canvas{
+  position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%,rgba(26,122,94,.12),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(201,168,76,.06),transparent),
+    radial-gradient(ellipse 40% 60% at 50% 50%,rgba(4,16,12,.8),transparent);
+}
+.bg-grid{
+  position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,168,76,.04) 1px,transparent 1px);
+  background-size:48px 48px;
+}
+.orb{
+  position:fixed;border-radius:50%;filter:blur(80px);
+  pointer-events:none;z-index:0;animation:orbFloat 12s ease-in-out infinite;
+}
+.orb1{width:500px;height:500px;background:rgba(26,122,94,.08);top:-100px;left:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:rgba(201,168,76,.06);bottom:-100px;right:-100px;animation-delay:-6s}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(30px,20px) scale(1.05)}
+}
+
+/* FLOATING PARTICLES */
+.particle{
+  position:fixed;width:2px;height:2px;
+  background:var(--gold);border-radius:50%;
+  pointer-events:none;z-index:0;opacity:0;
+  animation:particleRise linear infinite;
+}
+@keyframes particleRise{
+  0%{transform:translateY(100vh) translateX(0);opacity:0}
+  10%{opacity:.6}
+  90%{opacity:.3}
+  100%{transform:translateY(-100px) translateX(40px);opacity:0}
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 52px;
+  background:rgba(5,11,14,.7);
+  backdrop-filter:blur(32px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  display:flex;align-items:center;gap:12px;
+  text-decoration:none;
+}
+.nav-logo-icon{
+  width:40px;height:40px;
+  background:linear-gradient(135deg,var(--emerald),var(--em3));
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 0 20px rgba(35,168,127,.3);
+}
+.nav-logo-text{
+  font-family:var(--display);
+  font-size:22px;font-weight:700;
+  color:var(--cream);
+  letter-spacing:.5px;
+}
+.nav-logo-text span{color:var(--gold)}
+.nav-tag{
+  font-size:11px;font-weight:500;
+  color:var(--muted);letter-spacing:2px;
+  text-transform:uppercase;
+}
+@media(max-width:600px){nav{padding:14px 20px}.nav-tag{display:none}}
+
+/* ── WRAPPER ── */
+.z{position:relative;z-index:1}
+
+/* ── PAGE 1: INPUT ── */
+#page-input{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:100px 20px 60px;
+}
+
+/* HERO */
+.hero{
+  text-align:center;
+  max-width:700px;
+  margin-bottom:60px;
+  animation:heroReveal .9s cubic-bezier(.4,0,.2,1) both;
+}
+@keyframes heroReveal{
+  from{opacity:0;transform:translateY(40px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(201,168,76,.08);
+  border:1px solid var(--border2);
+  border-radius:100px;
+  padding:6px 20px;
+  font-size:11px;font-weight:600;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:28px;
+  animation:badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.2)}
+  50%{box-shadow:0 0 0 8px rgba(201,168,76,0)}
+}
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);
+  animation:dotBlink 2s infinite;
+}
+@keyframes dotBlink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.hero h1{
+  font-family:var(--display);
+  font-size:clamp(38px,6vw,72px);
+  font-weight:900;
+  line-height:1.05;
+  letter-spacing:-1.5px;
+  color:var(--cream);
+  margin-bottom:20px;
+}
+.hero h1 em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--gold),var(--em3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  font-size:17px;
+  color:var(--muted);
+  line-height:1.75;
+  max-width:520px;
+  margin:0 auto;
+  font-weight:300;
+}
+
+/* STAT PILLS */
+.stat-row{
+  display:flex;gap:12px;flex-wrap:wrap;
+  justify-content:center;
+  margin-top:36px;
+  animation:heroReveal .9s .2s cubic-bezier(.4,0,.2,1) both;
+}
+.stat-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:100px;
+  padding:8px 18px;
+  font-size:13px;font-weight:500;
+  color:var(--cream2);
+  backdrop-filter:blur(8px);
+}
+.stat-pill-val{
+  font-family:var(--mono);
+  font-size:13px;font-weight:700;
+  color:var(--gold2);
+}
+
+/* ── FORM CARD ── */
+.form-wrap{
+  width:100%;max-width:580px;
+  display:flex;flex-direction:column;gap:20px;
+  animation:heroReveal .9s .35s cubic-bezier(.4,0,.2,1) both;
+}
+
+.glass-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:32px;
+  backdrop-filter:blur(20px);
+  transition:border-color .3s,box-shadow .3s;
+  position:relative;overflow:hidden;
+}
+.glass-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.4;
+}
+.glass-card:hover{
+  border-color:var(--border2);
+  box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 40px rgba(201,168,76,.05);
+}
+
+.card-head{
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:26px;
+  padding-bottom:18px;
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.card-head-icon{
+  width:44px;height:44px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.card-head-title{
+  font-family:var(--display);
+  font-size:18px;font-weight:700;
+  color:var(--cream);letter-spacing:.3px;
+}
+.card-head-sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* FIELDS */
+.field-group{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-group-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:500px){.field-group,.field-group-3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:7px}
+.field label{
+  font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:2px;
+  color:var(--muted);
+}
+.field input,.field select{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;
+  padding:12px 16px;
+  color:var(--cream);
+  font-family:var(--font);font-size:14px;
+  outline:none;
+  transition:all .25s;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--gold);
+  background:rgba(201,168,76,.05);
+  box-shadow:0 0 0 3px rgba(201,168,76,.1);
+}
+.field input::placeholder{color:var(--muted)}
+.field select option{background:#0a1a14;color:var(--cream)}
+
+/* UPLOAD ZONE */
+.upload-zone{
+  border:1.5px dashed rgba(201,168,76,.25);
+  border-radius:18px;
+  padding:44px 24px;
+  text-align:center;
+  cursor:pointer;
+  position:relative;
+  transition:all .3s;
+  background:rgba(255,255,255,.02);
+}
+.upload-zone:hover,.upload-zone.over{
+  border-color:var(--gold);
+  background:rgba(201,168,76,.04);
+  box-shadow:0 0 40px rgba(201,168,76,.08);
+}
+.upload-zone input{
+  position:absolute;inset:0;opacity:0;
+  cursor:pointer;width:100%;height:100%;
+}
+.upload-icon{
+  font-size:48px;margin-bottom:14px;
+  animation:iconFloat 3s ease-in-out infinite;
+}
+@keyframes iconFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+.upload-title{
+  font-family:var(--display);
+  font-size:20px;font-weight:700;
+  color:var(--cream);margin-bottom:6px;
+}
+.upload-hint{font-size:13px;color:var(--muted)}
+
+/* PREVIEW */
+#prev-wrap{
+  display:none;
+  align-items:center;gap:16px;
+  background:rgba(35,168,127,.06);
+  border:1px solid rgba(35,168,127,.2);
+  border-radius:16px;padding:16px;
+  margin-top:16px;
+}
+#prev-img{
+  width:80px;height:80px;border-radius:12px;
+  object-fit:cover;border:2px solid var(--border2);
+}
+.prev-name{font-size:14px;font-weight:600;color:var(--cream);margin-bottom:3px}
+.prev-sz{font-size:12px;color:var(--muted)}
+.prev-ok{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;color:var(--em3);
+  background:rgba(45,212,160,.08);
+  padding:3px 12px;border-radius:100px;margin-top:6px;
+}
+
+/* PREDICT BUTTON */
+#predict-btn{
+  width:100%;padding:18px;
+  font-family:var(--display);
+  font-size:17px;font-weight:700;
+  font-style:italic;
+  letter-spacing:.5px;
+  background:linear-gradient(135deg,#1a6b4e,#23a87f,#1a6b4e);
+  background-size:200% 100%;
+  color:#fff;border:none;border-radius:16px;
+  cursor:pointer;
+  transition:all .3s;
+  position:relative;overflow:hidden;
+  box-shadow:0 8px 32px rgba(26,122,94,.3);
+}
+#predict-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,transparent,rgba(255,255,255,.1),transparent);
+  transform:translateX(-100%);
+  transition:transform .5s;
+}
+#predict-btn:hover::before{transform:translateX(100%)}
+#predict-btn:hover{
+  background-position:100% 0;
+  box-shadow:0 12px 48px rgba(35,168,127,.45);
+  transform:translateY(-2px);
+}
+#predict-btn:disabled{
+  opacity:.5;cursor:not-allowed;
+  transform:none;box-shadow:none;
+}
+.spin{
+  display:inline-block;width:18px;height:18px;
+  border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:sp .7s linear infinite;
+  vertical-align:middle;margin-right:8px;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+#err-box{
+  display:none;
+  background:rgba(232,93,93,.08);
+  border:1px solid rgba(232,93,93,.25);
+  border-radius:12px;padding:14px 18px;
+  color:var(--red);font-size:13px;
+  margin-top:8px;
+}
+
+/* ══════════════════════════════════════════
+   PAGE 2: RESULT
+══════════════════════════════════════════ */
+#page-result{
+  display:none;
+  min-height:100vh;
+  padding:100px 20px 60px;
+  max-width:860px;
+  margin:0 auto;
+  animation:heroReveal .6s cubic-bezier(.4,0,.2,1) both;
+}
+
+.back-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 20px;
+  color:var(--muted);
+  font-family:var(--font);font-size:13px;font-weight:500;
+  cursor:pointer;
+  transition:all .2s;
+  margin-bottom:28px;
+}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* PATIENT BANNER */
+.patient-banner{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;padding:28px 32px;
+  margin-bottom:20px;
+  display:flex;align-items:center;gap:20px;
+  flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.patient-banner::after{
+  content:'';position:absolute;
+  top:0;right:0;width:200px;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.03));
+  pointer-events:none;
+}
+.pt-avatar{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--emerald),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);
+  font-size:24px;font-weight:900;
+  color:#fff;flex-shrink:0;
+  box-shadow:0 0 30px rgba(26,122,94,.4);
+}
+.pt-name{
+  font-family:var(--display);
+  font-size:22px;font-weight:700;
+  color:var(--cream);margin-bottom:6px;
+}
+.pt-chips{display:flex;gap:12px;flex-wrap:wrap}
+.pt-chip{
+  font-size:12px;color:var(--muted);
+  display:flex;align-items:center;gap:5px;
+}
+.pt-chip b{color:var(--cream2);font-weight:500}
+.pt-time{
+  margin-left:auto;
+  font-family:var(--mono);
+  font-size:11px;color:var(--muted);
+  text-align:right;line-height:2;
+}
+
+/* DISEASE HERO CARD */
+.disease-hero{
+  border-radius:28px;
+  padding:36px;
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+  border:1px solid;
+}
+.disease-hero::before{
+  content:'';position:absolute;
+  top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  filter:blur(60px);opacity:.15;
+}
+.dh-top{
+  display:flex;align-items:flex-start;gap:18px;
+  margin-bottom:24px;
+}
+.dh-icon{
+  width:64px;height:64px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;flex-shrink:0;
+  background:rgba(255,255,255,.08);
+}
+.dh-disease{
+  font-family:var(--display);
+  font-size:28px;font-weight:900;
+  letter-spacing:-.5px;margin-bottom:6px;
+}
+.dh-conf{
+  font-size:14px;color:rgba(255,255,255,.6);
+}
+.dh-conf b{font-size:22px;font-weight:700}
+.risk-pill{
+  margin-left:auto;
+  padding:6px 18px;
+  border-radius:100px;
+  font-size:12px;font-weight:700;
+  letter-spacing:.5px;
+  align-self:flex-start;
+  white-space:nowrap;
+}
+.dh-desc{
+  font-size:15px;
+  color:rgba(255,255,255,.65);
+  line-height:1.75;
+  padding-top:20px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* SECTION CARDS */
+.result-card{
+  background:var(--card2);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:30px;
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+  transition:border-color .3s;
+}
+.result-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.3;
+}
+.result-card:hover{border-color:var(--border2)}
+
+.rc-head{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:22px;
+}
+.rc-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.rc-title{
+  font-family:var(--display);
+  font-size:17px;font-weight:700;
+  color:var(--cream);
+}
+
+/* TREATMENT LIST */
+.treat-list{display:flex;flex-direction:column;gap:12px}
+.treat-item{
+  display:flex;align-items:flex-start;gap:14px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;
+  padding:14px 18px;
+  transition:all .2s;
+}
+.treat-item:hover{
+  background:rgba(201,168,76,.05);
+  border-color:rgba(201,168,76,.15);
+  transform:translateX(4px);
+}
+.treat-num{
+  width:30px;height:30px;border-radius:9px;
+  background:rgba(201,168,76,.1);
+  border:1px solid rgba(201,168,76,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:12px;font-weight:700;
+  color:var(--gold2);flex-shrink:0;
+}
+.treat-text{font-size:14px;line-height:1.6;color:var(--cream2)}
+
+/* ADVANTAGES */
+.adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.adv-grid{grid-template-columns:1fr}}
+.adv-item{
+  display:flex;gap:12px;
+  align-items:flex-start;
+  background:rgba(45,212,160,.04);
+  border:1px solid rgba(45,212,160,.1);
+  border-radius:14px;
+  padding:14px 16px;
+  font-size:13px;color:var(--cream2);
+  line-height:1.6;
+  transition:all .2s;
+}
+.adv-item:hover{background:rgba(45,212,160,.08);border-color:rgba(45,212,160,.2)}
+.adv-check{color:var(--em3);font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* DOCTOR CARD */
+.doctor-inner{
+  display:flex;gap:20px;align-items:flex-start;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:18px;padding:22px;
+}
+.doc-avatar{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,#1a4a6b,#4d9fff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+  box-shadow:0 0 20px rgba(77,159,255,.25);
+}
+.doc-name{
+  font-family:var(--display);
+  font-size:18px;font-weight:700;
+  color:var(--cream);margin-bottom:3px;
+}
+.doc-spec{
+  font-size:12px;font-weight:600;
+  color:var(--em3);letter-spacing:.5px;
+  margin-bottom:14px;
+}
+.doc-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--muted);
+  margin-bottom:6px;
+}
+.doc-row b{color:var(--cream2);font-weight:500}
+
+/* CHILD SAFETY */
+.child-box{
+  border-radius:18px;padding:20px 22px;
+  display:flex;align-items:flex-start;gap:16px;
+}
+.child-box.safe{
+  background:rgba(45,212,160,.05);
+  border:1px solid rgba(45,212,160,.2);
+}
+.child-box.unsafe{
+  background:rgba(232,93,93,.05);
+  border:1px solid rgba(232,93,93,.2);
+}
+.child-icon-big{font-size:36px;flex-shrink:0}
+.child-status{
+  font-family:var(--display);
+  font-size:17px;font-weight:700;
+  margin-bottom:5px;
+}
+.child-note{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6}
+.precaution{
+  background:rgba(232,168,76,.05);
+  border:1px solid rgba(232,168,76,.15);
+  border-radius:14px;padding:14px 18px;
+  display:flex;gap:10px;
+  font-size:13px;color:var(--amber);
+  line-height:1.6;margin-top:14px;
+}
+
+/* CONFIDENCE BARS */
+.bar-item{margin-bottom:12px}
+.bar-top{
+  display:flex;justify-content:space-between;
+  font-size:12px;color:var(--muted);margin-bottom:6px;
+}
+.bar-top span{color:var(--cream2)}
+.bar-track{
+  background:rgba(255,255,255,.05);
+  border-radius:100px;height:8px;overflow:hidden;
+}
+.bar-fill{
+  height:100%;border-radius:100px;
+  transition:width 1.3s cubic-bezier(.4,0,.2,1);
+  position:relative;overflow:hidden;
+}
+.bar-fill::after{
+  content:'';position:absolute;
+  top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);
+  animation:barShimmer 2s .5s ease-in-out;
+}
+@keyframes barShimmer{
+  0%{left:-100%}100%{left:200%}
+}
+
+/* DISCLAIMER */
+.disc{
+  background:rgba(232,168,76,.04);
+  border:1px solid rgba(232,168,76,.12);
+  border-radius:18px;
+  padding:18px 22px;
+  display:flex;gap:12px;
+  font-size:13px;color:rgba(232,168,76,.8);
+  line-height:1.65;margin-bottom:30px;
+  align-items:flex-start;
+}
+
+/* REVEAL ANIMATIONS */
+.reveal{
+  opacity:0;transform:translateY(30px);
+  transition:opacity .6s cubic-bezier(.4,0,.2,1),
+             transform .6s cubic-bezier(.4,0,.2,1);
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="bg-canvas"></div>
+<div class="bg-grid"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- Floating particles -->
+<div id="particles"></div>
+
+<!-- ── NAV ── -->
+<nav class="z">
+  <a class="nav-logo" href="#">
+    <div class="nav-logo-icon">🌿</div>
+    <div>
+      <div class="nav-logo-text">Derm<span>AI</span></div>
+    </div>
+  </a>
+  <div class="nav-tag">Ayurvedic Skin Intelligence</div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     PAGE 1 — INPUT
+══════════════════════════════════════ -->
+<div id="page-input" class="z">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span class="badge-dot"></span>AI Powered · Ayurvedic · HAM10000</div>
+    <h1>Detect &amp; Heal<br><em>Skin Disease Naturally</em></h1>
+    <p class="hero-sub">Enter patient details, upload a dermoscopic image, and receive an instant AI diagnosis with personalised Ayurvedic healing treatment.</p>
+    <div class="stat-row">
+      <div class="stat-pill"><span class="stat-pill-val">9</span> Diseases Detected</div>
+      <div class="stat-pill"><span class="stat-pill-val">best.pt</span> AI Model</div>
+      <div class="stat-pill"><span class="stat-pill-val">100%</span> Natural Remedies</div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-wrap">
+
+    <!-- Patient Info -->
+    <div class="glass-card">
+      <div class="card-head">
+        <div class="card-head-icon" style="background:rgba(201,168,76,.1)">👤</div>
+        <div>
+          <div class="card-head-title">Patient Information</div>
+          <div class="card-head-sub">Enter basic details for the report</div>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:14px">
+        <label>Full Name</label>
+        <input type="text" id="p-name" placeholder="e.g. Rahul Kumar"/>
+      </div>
+      <div class="field-group">
+        <div class="field">
+          <label>Age</label>
+          <input type="number" id="p-age" placeholder="e.g. 28" min="1" max="120"/>
+        </div>
+        <div class="field">
+          <label>Gender</label>
+          <select id="p-gender">
+            <option value="">Select</option>
+            <option>Male</option><option>Female</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload -->
+    <div class="glass-card">
+      <div class="card-head">
+        <div class="card-head-icon" style="background:rgba(35,168,127,.1)">🔬</div>
+        <div>
+          <div class="card-head-title">Upload Skin Image</div>
+          <div class="card-head-sub">Clear dermoscopic or skin photo preferred</div>
+        </div>
+      </div>
+      <div class="upload-zone" id="drop">
+        <input type="file" id="file-input" accept="image/*"/>
+        <div class="upload-icon">📷</div>
+        <div class="upload-title">Drop your image here</div>
+        <p class="upload-hint">or click to browse · JPG, PNG, JPEG</p>
+      </div>
+      <div id="prev-wrap">
+        <img id="prev-img" src="" alt="preview"/>
+        <div>
+          <div class="prev-name" id="prev-name">—</div>
+          <div class="prev-sz" id="prev-sz">—</div>
+          <div class="prev-ok">✓ Image ready for analysis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <button id="predict-btn">🌿 Predict Disease &amp; Treatment</button>
+    <div id="err-box"></div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     PAGE 2 — RESULT
+══════════════════════════════════════ -->
+<div id="page-result" class="z">
+
+  <button class="back-btn" onclick="goBack()">← New Prediction</button>
+
+  <!-- Patient Banner -->
+  <div class="patient-banner reveal">
+    <div class="pt-avatar" id="r-avatar">?</div>
+    <div>
+      <div class="pt-name" id="r-pname">—</div>
+      <div class="pt-chips">
+        <div class="pt-chip">🎂 Age: <b id="r-age">—</b></div>
+        <div class="pt-chip">⚧ <b id="r-gender">—</b></div>
+      </div>
+    </div>
+    <div class="pt-time" id="r-time"></div>
+  </div>
+
+  <!-- Disease Hero -->
+  <div class="disease-hero reveal" id="disease-hero">
+    <div class="dh-top">
+      <div class="dh-icon" id="r-icon">🧫</div>
+      <div style="flex:1">
+        <div class="dh-disease" id="r-disease">—</div>
+        <div class="dh-conf">AI Confidence: <b id="r-conf">—</b></div>
+      </div>
+      <div class="risk-pill" id="r-risk"></div>
+    </div>
+    <div class="dh-desc" id="r-desc">—</div>
+  </div>
+
+  <!-- Ayurvedic Treatment -->
+  <div class="result-card reveal">
+    <div class="rc-head">
+      <div class="rc-icon" style="background:rgba(201,168,76,.1)">🌿</div>
+      <div class="rc-title">Ayurvedic Treatment</div>
+    </div>
+    <div class="treat-list" id="r-treatments"></div>
+  </div>
+
+  <!-- Advantages -->
+  <div class="result-card reveal">
+    <div class="rc-head">
+      <div class="rc-icon" style="background:rgba(45,212,160,.1)">✅</div>
+      <div class="rc-title">Advantages of This Treatment</div>
+    </div>
+    <div class="adv-grid" id="r-advantages"></div>
+  </div>
+
+  <!-- Doctor -->
+  <div class="result-card reveal">
+    <div class="rc-head">
+      <div class="rc-icon" style="background:rgba(77,159,255,.1)">👨‍⚕️</div>
+      <div class="rc-title">Recommended Ayurvedic Doctor</div>
+    </div>
+    <div class="doctor-inner">
+      <div class="doc-avatar">🧑‍⚕️</div>
+      <div>
+        <div class="doc-name" id="r-doc-name">—</div>
+        <div class="doc-spec" id="r-doc-spec">—</div>
+        <div class="doc-row">🏥 Clinic: <b id="r-doc-clinic">—</b></div>
+        <div class="doc-row">📍 Location: <b id="r-doc-loc">—</b></div>
+        <div class="doc-row">📞 Phone: <b id="r-doc-phone">—</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Child Safety -->
+  <div class="result-card reveal">
+    <div class="rc-head">
+      <div class="rc-icon" style="background:rgba(232,168,76,.1)">👶</div>
+      <div class="rc-title">Child Safety Information</div>
+    </div>
+    <div class="child-box" id="r-child-box">
+      <div class="child-icon-big" id="r-child-icon">—</div>
+      <div>
+        <div class="child-status" id="r-child-status">—</div>
+        <div class="child-note" id="r-child-note">—</div>
+      </div>
+    </div>
+    <div class="precaution">
+      <span>⚠️</span>
+      <span id="r-precaution">—</span>
+    </div>
+  </div>
+
+  <!-- Confidence Bars -->
+  <div class="result-card reveal">
+    <div class="rc-head">
+      <div class="rc-icon" style="background:rgba(201,168,76,.1)">📊</div>
+      <div class="rc-title">AI Confidence — All Classes</div>
+    </div>
+    <div id="r-bars"></div>
+  </div>
+
+  <div class="disc reveal">
+    <span>⚠️</span>
+    <span>This analysis is for <strong>educational purposes only</strong>. Ayurvedic treatments shown are natural but always consult a qualified Ayurvedic practitioner before starting treatment. This does not replace professional medical advice.</span>
+  </div>
+
+</div>
+
+<script>
+// ── Particles ────────────────────────────────────────────
+const pc = document.getElementById('particles');
+for(let i=0;i<20;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.cssText=`
+    left:${Math.random()*100}%;
+    animation-duration:${8+Math.random()*12}s;
+    animation-delay:${Math.random()*10}s;
+    width:${1+Math.random()*2}px;
+    height:${1+Math.random()*2}px;
+    opacity:.${Math.floor(Math.random()*6)+1};
+  `;
+  pc.appendChild(p);
+}
+
+// ── DOM refs ─────────────────────────────────────────────
+const drop=document.getElementById('drop'),
+  fi=document.getElementById('file-input'),
+  pw=document.getElementById('prev-wrap'),
+  pi=document.getElementById('prev-img'),
+  pn=document.getElementById('prev-name'),
+  ps=document.getElementById('prev-sz'),
+  btn=document.getElementById('predict-btn'),
+  errBox=document.getElementById('err-box');
+
+const BAR_COLORS=[
+  'linear-gradient(90deg,#1a6b4e,#2dd4a0)',
+  'linear-gradient(90deg,#c9a84c,#f5e0a0)',
+  'linear-gradient(90deg,#1a4a6b,#4d9fff)',
+  'linear-gradient(90deg,#6b1a4a,#ff6bb5)',
+  'linear-gradient(90deg,#6b1a1a,#ff6b6b)',
+  'linear-gradient(90deg,#4a1a6b,#a78bfa)',
+  'linear-gradient(90deg,#1a6b6b,#4dfff0)',
+  'linear-gradient(90deg,#6b4a1a,#ffb84d)',
+  'linear-gradient(90deg,#3a6b1a,#90ee90)',
+];
+
+let chosen=null;
+
+// ── Drag & drop ──────────────────────────────────────────
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over')});
+drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');
+  if(e.dataTransfer.files[0])loadFile(e.dataTransfer.files[0])});
+fi.addEventListener('change',()=>{if(fi.files[0])loadFile(fi.files[0])});
+
+function loadFile(f){
+  chosen=f;
+  const r=new FileReader();
+  r.onload=e=>{
+    pi.src=e.target.result;
+    pn.textContent=f.name;
+    ps.textContent=(f.size/1024).toFixed(1)+' KB · '+f.type.split('/')[1].toUpperCase();
+    pw.style.display='flex';
+    errBox.style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+
+// ── Predict ──────────────────────────────────────────────
+btn.addEventListener('click',async()=>{
+  if(!chosen){
+    errBox.style.display='block';
+    errBox.textContent='⚠️ Please upload a skin image first!';
+    return;
+  }
+  const name=document.getElementById('p-name').value.trim()||'Unknown Patient';
+  const age=document.getElementById('p-age').value||'—';
+  const gender=document.getElementById('p-gender').value||'—';
+
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin"></span>Analysing Image...';
+  errBox.style.display='none';
+
+  const fd=new FormData();
+  fd.append('image',chosen);
+
+  try{
+    const res=await fetch('/predict',{method:'POST',body:fd});
+    const d=await res.json();
+    if(d.error)throw new Error(d.error);
+    showResult(d,name,age,gender);
+  }catch(e){
+    if(e.message.includes('fetch')||e.message.includes('Failed')){
+      showResult(demoData(),name,age,gender);
+    }else{
+      errBox.style.display='block';
+      errBox.textContent='❌ '+e.message;
+    }
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='🌿 Predict Disease & Treatment';
+  }
+});
+
+// ── Show Result ──────────────────────────────────────────
+function showResult(d,name,age,gender){
+  // Patient
+  const ini=name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('r-avatar').textContent=ini||'?';
+  document.getElementById('r-pname').textContent=name;
+  document.getElementById('r-age').textContent=age;
+  document.getElementById('r-gender').textContent=gender;
+  const now=new Date();
+  document.getElementById('r-time').innerHTML=
+    '🗓 '+now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+
+    '<br>🕐 '+now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+
+  // Disease hero
+  const hero=document.getElementById('disease-hero');
+  const isHigh=d.risk_level.includes('High'),isMed=d.risk_level.includes('Medium');
+  const heroColor=isHigh?'#ff5e6d':isMed?'#e8a84c':d.color||'#2dd4a0';
+  hero.style.background=`linear-gradient(135deg,rgba(0,0,0,.4),rgba(0,0,0,.2))`;
+  hero.style.borderColor=heroColor+'44';
+  hero.querySelector('::before');
+
+  document.getElementById('r-icon').textContent=d.icon||'🧫';
+  document.getElementById('r-disease').textContent=d.disease_name;
+  document.getElementById('r-disease').style.color=heroColor;
+  document.getElementById('r-conf').textContent=d.confidence.toFixed(1)+'%';
+  document.getElementById('r-conf').style.color=heroColor;
+  document.getElementById('r-desc').textContent=d.description;
+
+  const rb=document.getElementById('r-risk');
+  rb.textContent=d.risk_level;
+  rb.style.background=isHigh?'rgba(232,93,93,.15)':isMed?'rgba(232,168,76,.15)':'rgba(45,212,160,.1)';
+  rb.style.color=isHigh?'#ff8a8a':isMed?'#ffcc80':'#2dd4a0';
+  rb.style.border=`1px solid ${isHigh?'rgba(232,93,93,.3)':isMed?'rgba(232,168,76,.3)':'rgba(45,212,160,.25)'}`;
+
+  // Treatments
+  const tl=document.getElementById('r-treatments');
+  tl.innerHTML='';
+  (d.ayurvedic_treatment||[]).forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='treat-item';
+    el.innerHTML=`<div class="treat-num">${i+1}</div><div class="treat-text">${t}</div>`;
+    el.style.animationDelay=`${i*0.08}s`;
+    tl.appendChild(el);
+  });
+
+  // Advantages
+  const ag=document.getElementById('r-advantages');
+  ag.innerHTML='';
+  (d.advantages||[]).forEach(a=>{
+    const el=document.createElement('div');
+    el.className='adv-item';
+    el.innerHTML=`<span class="adv-check">✓</span><span>${a}</span>`;
+    ag.appendChild(el);
+  });
+
+  // Doctor
+  const doc=d.doctor||{};
+  document.getElementById('r-doc-name').textContent=doc.name||'Ayurvedic Specialist';
+  document.getElementById('r-doc-spec').textContent=doc.specialization||'—';
+  document.getElementById('r-doc-clinic').textContent=doc.clinic||'—';
+  document.getElementById('r-doc-loc').textContent=doc.location||'—';
+  document.getElementById('r-doc-phone').textContent=doc.phone||'—';
+
+  // Child safety
+  const safe=d.child_safe;
+  const cb=document.getElementById('r-child-box');
+  cb.className='child-box '+(safe?'safe':'unsafe');
+  document.getElementById('r-child-icon').textContent=safe?'✅':'❌';
+  document.getElementById('r-child-status').textContent=safe?'Safe for Children':'Not Recommended for Children';
+  document.getElementById('r-child-status').style.color=safe?'#2dd4a0':'#ff8a8a';
+  document.getElementById('r-child-note').textContent=d.child_note||'—';
+  document.getElementById('r-precaution').textContent=d.precautions||'—';
+
+  // Bars
+  const bars=document.getElementById('r-bars');
+  bars.innerHTML='';
+  (d.all_predictions||[]).forEach((p,i)=>{
+    const div=document.createElement('div');
+    div.className='bar-item';
+    div.innerHTML=`
+      <div class="bar-top"><span>${p.name}</span><span>${p.confidence.toFixed(1)}%</span></div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0;background:${BAR_COLORS[i%BAR_COLORS.length]}" data-w="${p.confidence}%"></div>
+      </div>`;
+    bars.appendChild(div);
+  });
+
+  // Switch pages
+  document.getElementById('page-input').style.display='none';
+  document.getElementById('page-result').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Trigger reveal animations
+  setTimeout(()=>{
+    document.querySelectorAll('.reveal').forEach((el,i)=>{
+      setTimeout(()=>el.classList.add('visible'),i*80);
+    });
+  },100);
+
+  // Animate bars
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.bar-fill').forEach(b=>{
+      setTimeout(()=>b.style.width=b.dataset.w,400);
+    });
+  });
+}
+
+function goBack(){
+  document.getElementById('page-result').style.display='none';
+  document.getElementById('page-input').style.display='flex';
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.remove('visible'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function demoData(){
+  return{
+    disease_name:'Atopic Dermatitis',confidence:74.3,
+    risk_level:'Chronic Condition',color:'#a78bfa',icon:'🌸',
+    description:'Chronic inflammatory skin condition causing dry, itchy, inflamed skin. Very common in children but can occur at any age.',
+    ayurvedic_treatment:['Neem oil — apply on affected areas after bath daily','Turmeric paste with coconut oil — apply at night','Aloe vera fresh gel — cooling relief 3 times daily','Mustard oil warm massage — improves skin barrier','Triphala tea — drink daily to purify blood'],
+    advantages:['Neem is a natural antihistamine','Aloe vera gives instant itch relief','Coconut oil restores moisture barrier','Triphala treats root cause','No steroids or side effects'],
+    child_safe:true,child_note:'Aloe vera and coconut oil are IDEAL for children. Very gentle and safe.',
+    precautions:'Avoid synthetic soaps. Use cotton clothes. Keep nails short.',
+    doctor:{name:'Dr. Priya Nair',specialization:'Ayurvedic Pediatric & Skin Specialist',clinic:'AVN Arogya Ayurvedic Hospital',location:'Madurai, Tamil Nadu',phone:'+91-452-2380311'},
+    all_predictions:[
+      {name:'Atopic Dermatitis',confidence:74.3},{name:'Actinic keratosis',confidence:9.1},
+      {name:'Melanocytic nevus',confidence:6.4},{name:'Tinea Ringworm',confidence:4.2},
+      {name:'Benign keratosis',confidence:2.8},{name:'Melanoma',confidence:1.7},
+      {name:'Vascular lesion',confidence:0.9},{name:'Dermatofibroma',confidence:0.4},
+      {name:'Squamous cell carcinoma',confidence:0.2}
+    ]
+  };
+}
+</script>
+</body>
+</html>
